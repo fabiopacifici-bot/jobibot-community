@@ -1,58 +1,176 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# JobiBot Community Edition 🤖
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**Your Open-Source AI Job Coach — CV Review, Job Matching & Interview Simulation**
 
-## About Laravel
+[![PHP 8.3+](https://img.shields.io/badge/PHP-8.3%2B-777bb4?logo=php)](https://php.net)
+[![Laravel 13](https://img.shields.io/badge/Laravel-13-red?logo=laravel)](https://laravel.com)
+[![Tests](https://img.shields.io/badge/tests-43%20%E2%9C%94-brightgreen)](https://github.com/fabiopacifici-bot/jobibot-community/actions)
+[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+JobiBot Community Edition is a Laravel-based, AI-powered desktop and mobile application designed to help candidates prepare for the job market. Upload your CV, search for matching jobs, and run realistic AI interview simulations — all powered by your own AI provider.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## ✨ Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **📄 CV Upload & Review** — Upload your CV and get AI-powered professional feedback and rewriting suggestions
+- **🔍 Job Search & Matching** — Search remote jobs and get AI-powered CV-to-job matching scores
+- **🎯 Interview Simulation** — Run realistic job interview simulations with an AI recruiter that adapts to your answers
+- **⚙️ Provider-Agnostic AI** — Use OpenAI, Ollama (local), or Private AI (vLLM) — switch providers without code changes
+- **📊 Smart Dashboard** — Track your simulation history, scores, and progress over time
+- **🖥️ Desktop & Mobile** — Run as a web app, desktop app (Linux/macOS/Windows), or Android APK via NativePHP
 
-## Learning Laravel
+## 🧱 Tech Stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **Backend:** Laravel 13, PHP 8.3+
+- **Frontend:** Livewire 4, Tailwind CSS 4, Alpine.js
+- **Desktop/Mobile:** NativePHP 2.2
+- **Testing:** PEST 4, RefreshDatabase
+- **AI Providers:** OpenAI, Ollama, Private AI (vLLM-compatible)
+- **CI/CD:** GitHub Actions
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 📋 Requirements
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+- PHP 8.3+
+- [Composer](https://getcomposer.org/)
+- [Node.js 20+](https://nodejs.org/) & npm
+- SQLite (default), MySQL 8+, or PostgreSQL 15+
+- Optional: Ollama or vLLM for local AI; OpenAI API key for cloud AI
 
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## 🚀 Quick Start
 
 ```bash
-composer require laravel/boost --dev
+# Clone the repository
+git clone https://github.com/fabiopacifici-bot/jobibot-community.git
+cd jobibot-community
 
-php artisan boost:install
+# Install PHP dependencies
+composer install
+
+# Install frontend dependencies & build
+npm install && npm run build
+
+# Set up environment
+cp .env.example .env
+php artisan key:generate
+
+# Run the installer (migrates database)
+php artisan jobibot:install
+
+# Start the development server
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Open [http://localhost:8000](http://localhost:8000) in your browser.
 
-## Contributing
+## 🔧 AI Provider Setup
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+JobiBot works with three AI providers. Configure your choice in `.env`:
 
-## Code of Conduct
+### OpenAI (Cloud)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```env
+JOBIBOT_AI_PROVIDER=openai
+JOBIBOT_AI_MODEL=gpt-4o
+OPENAI_API_KEY=sk-your-key-here
+```
 
-## Security Vulnerabilities
+### Ollama (Local)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```env
+JOBIBOT_AI_PROVIDER=ollama
+JOBIBOT_AI_MODEL=gemma3
+OLLAMA_BASE_URL=http://localhost:11434
+```
 
-## License
+Make sure [Ollama](https://ollama.com) is running and your model is pulled:
+```bash
+ollama pull gemma3
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Private AI / vLLM (Self-Hosted)
+
+```env
+JOBIBOT_AI_PROVIDER=privateai
+JOBIBOT_AI_MODEL=qwen3-7b
+PRIVATEAI_BASE_URL=http://localhost:8005
+```
+
+vLLM must expose an OpenAI-compatible API endpoint.
+
+> 💡 You can also configure the provider through the **Settings** page in the app UI.
+
+## 📖 Usage
+
+### Dashboard
+View your simulation stats: total sessions, completed interviews, and average scores. Quick-launch buttons guide you to each feature.
+
+### CV Upload
+Upload your CV and let the AI review it for professional standards (Europass guidelines). Get a revised version with improved formatting and structure.
+
+### Job Search
+Browse remote job listings by category. Select a job and run an AI match against your CV to see how well you fit.
+
+### Interview Simulation
+Choose a job and start a simulated interview. The AI recruiter asks 5 introductory questions followed by 5 technical questions, provides feedback on your answers, and gives a final score with areas for improvement.
+
+## 🖥️ Desktop (NativePHP)
+
+Build a native desktop app for your platform:
+
+```bash
+# Install NativePHP desktop dependencies
+php artisan native:install
+
+# Build for your current OS
+php artisan native:build
+```
+
+Outputs: `.AppImage` (Linux), `.dmg` (macOS), `.exe` (Windows)
+
+## 📱 Mobile (Android)
+
+Build an Android APK:
+
+```bash
+# Build Android .apk
+php artisan native:build mobile
+```
+
+Download the APK from the [latest release](https://github.com/fabiopacifici-bot/jobibot-community/releases).
+
+## 🧪 Development
+
+### Run tests
+
+```bash
+php artisan test --parallel
+```
+
+43 tests covering feature pages, LAI engine, models, provider instantiation, and edge cases.
+
+### Code style
+
+```bash
+./vendor/bin/pint
+```
+
+Laravel Pint enforces PSR-12 and Laravel conventions.
+
+### Architecture
+
+See **[ADR.md](./ADR.md)** for a complete architectural overview, design decisions, and codebase analysis.
+
+## 🤝 Contributing
+
+Contributions are welcome! See **[CONTRIBUTING.md](./CONTRIBUTING.md)** for guidelines on reporting bugs, suggesting features, and submitting pull requests.
+
+## 📄 License
+
+MIT — Copyright (c) 2026 [Fabio Pacifici (pacificDev)](https://github.com/pacificDev)
+
+JobiBot Community Edition is open-source software. See [LICENSE](./LICENSE) for full terms.
+
+## 🙏 Credits
+
+Created by [Fabio Pacifici](https://github.com/pacificDev) — part of the [NSA Agency](https://github.com/fabiopacifici-bot) ecosystem.
+
+Built with ❤️ using Laravel, Livewire, NativePHP, and open-source AI.
