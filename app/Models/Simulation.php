@@ -10,10 +10,6 @@ class Simulation extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'uuid';
-    public $incrementing = false;
-    protected $keyType = 'string';
-
     protected $fillable = [
         'candidate_id',
         'status',
@@ -22,11 +18,6 @@ class Simulation extends Model
         'simulation_score',
         'considerations',
     ];
-
-    public function getRouteKeyName()
-    {
-        return 'uuid';
-    }
 
     public function candidate()
     {
@@ -40,13 +31,15 @@ class Simulation extends Model
 
     public function messages()
     {
-        return $this->hasMany(SimulationMessage::class, 'simulation_id');
+        return $this->hasMany(SimulationMessage::class);
     }
 
     protected static function booted(): void
     {
         static::creating(function (Simulation $simulation) {
-            $simulation->uuid = (string) Str::uuid();
+            if (empty($simulation->uuid)) {
+                $simulation->uuid = (string) Str::uuid();
+            }
         });
     }
 }
