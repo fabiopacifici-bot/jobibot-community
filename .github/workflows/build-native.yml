@@ -38,6 +38,10 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate
+          echo "NATIVEPHP_APP_ID=ai.jobibot.community" >> .env
+          echo "NATIVEPHP_APP_VERSION=$(echo ${{ github.ref_name }} | sed 's/^v//')" >> .env
+          echo "GITHUB_OWNER=fabiopacifici-bot" >> .env
+          echo "GITHUB_REPO=jobibot-community" >> .env
 
       - name: Install NativePHP
         run: php artisan native:install --no-interaction
@@ -84,6 +88,10 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate
+          echo "NATIVEPHP_APP_ID=ai.jobibot.community" >> .env
+          echo "NATIVEPHP_APP_VERSION=$(echo ${{ github.ref_name }} | sed 's/^v//')" >> .env
+          echo "GITHUB_OWNER=fabiopacifici-bot" >> .env
+          echo "GITHUB_REPO=jobibot-community" >> .env
 
       - name: Install NativePHP
         run: php artisan native:install --no-interaction
@@ -130,6 +138,10 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate
+          echo "NATIVEPHP_APP_ID=ai.jobibot.community" >> .env
+          echo "NATIVEPHP_APP_VERSION=$(echo ${{ github.ref_name }} | sed 's/^v//')" >> .env
+          echo "GITHUB_OWNER=fabiopacifici-bot" >> .env
+          echo "GITHUB_REPO=jobibot-community" >> .env
 
       - name: Install NativePHP
         run: php artisan native:install --no-interaction
@@ -195,6 +207,8 @@ jobs:
           echo "NATIVEPHP_APP_ID=ai.jobibot.community" >> .env
           echo "NATIVEPHP_APP_VERSION=$(echo ${{ github.ref_name }} | sed 's/^v//')" >> .env
           echo "NATIVEPHP_APP_VERSION_CODE=1" >> .env
+          echo "GITHUB_OWNER=fabiopacifici-bot" >> .env
+          echo "GITHUB_REPO=jobibot-community" >> .env
 
       - name: Install NativePHP Mobile
         run: php artisan native:install --force --no-interaction
@@ -207,7 +221,8 @@ jobs:
           sed -i 's/REPLACE_TARGET_SDK/36/g' "$GRADLE_FILE"
           sed -i 's/REPLACE_APP_ID/ai.jobibot.community/g' "$GRADLE_FILE"
           sed -i 's/REPLACEMECODE/1/g' "$GRADLE_FILE"
-          sed -i 's/REPLACEME/1.0.0/g' "$GRADLE_FILE"
+          APP_VER=$(echo ${{ github.ref_name }} | sed 's/^v//')
+          sed -i "s/REPLACEME/${APP_VER}/g" "$GRADLE_FILE"
           sed -i 's/REPLACE_MINIFY_ENABLED/false/g' "$GRADLE_FILE"
           sed -i 's/REPLACE_SHRINK_RESOURCES/false/g' "$GRADLE_FILE"
           sed -i 's/REPLACE_DEBUG_SYMBOLS/none/g' "$GRADLE_FILE"
