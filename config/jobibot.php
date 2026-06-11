@@ -6,7 +6,7 @@ return [
     | AI Provider Configuration
     |--------------------------------------------------------------------------
     |
-    | Supported: "openai", "ollama", "privateai"
+    | Supported: "openai", "ollama", "privateai", "openrouter"
     |
     | Each provider has its own config section below.
     | The 'provider' key selects which one is active.
@@ -38,6 +38,12 @@ return [
             'base_url' => env('PRIVATEAI_BASE_URL', 'http://localhost:8005'),
             'model' => env('PRIVATEAI_MODEL', 'qwen3-7b'),
             'api_key' => env('PRIVATEAI_API_KEY', null),
+        ],
+
+        'openrouter' => [
+            'api_key' => env('OPENROUTER_API_KEY', ''),
+            'base_url' => env('OPENROUTER_BASE_URL', 'https://openrouter.ai/api/v1'),
+            'model' => env('OPENROUTER_MODEL', 'openai/gpt-4o'),
         ],
     ],
 

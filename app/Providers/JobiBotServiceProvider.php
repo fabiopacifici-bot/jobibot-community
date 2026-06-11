@@ -6,6 +6,7 @@ use App\Console\Commands\InstallCommand;
 use App\JobiBot\LaiProviderInterface;
 use App\JobiBot\Providers\OllamaProvider;
 use App\JobiBot\Providers\OpenAIProvider;
+use App\JobiBot\Providers\OpenRouterProvider;
 use App\JobiBot\Providers\PrivateAIProvider;
 use Illuminate\Support\ServiceProvider;
 
@@ -30,6 +31,11 @@ class JobiBotServiceProvider extends ServiceProvider
                     baseUrl: config('jobibot.providers.privateai.base_url'),
                     defaultModel: config('jobibot.providers.privateai.model'),
                     apiKey: config('jobibot.providers.privateai.api_key'),
+                ),
+                'openrouter' => new OpenRouterProvider(
+                    apiKey: config('jobibot.providers.openrouter.api_key'),
+                    baseUrl: config('jobibot.providers.openrouter.base_url'),
+                    defaultModel: config('jobibot.providers.openrouter.model'),
                 ),
                 default => new OpenAIProvider(
                     apiKey: config('jobibot.providers.openai.api_key'),

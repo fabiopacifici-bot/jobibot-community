@@ -59,8 +59,8 @@
 
     {{-- Main content area --}}
     <div class="flex-1 flex flex-col min-w-0">
-        {{-- Mobile header (visible only on mobile) --}}
-        <header class="md:hidden bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 px-4 py-3 flex items-center gap-3">
+        {{-- Mobile header (visible only on mobile) — safe-area padding for Android notch/status bar --}}
+        <header class="md:hidden bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800 px-4 py-3 flex items-center gap-3" style="padding-top: calc(0.75rem + env(safe-area-inset-top, 0px));">
             <img src="{{ asset('images/logo.png') }}" alt="JobiBot" class="w-7 h-7 rounded-lg">
             <span class="text-lg font-bold text-indigo-600 dark:text-indigo-400">JobiBot</span>
         </header>

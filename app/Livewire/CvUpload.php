@@ -27,13 +27,6 @@ class CvUpload extends Component
             'cv' => 'file|mimes:pdf,doc,docx,txt|max:'.(config('jobibot.cv_max_size_kb', 5120)),
         ]);
 
-        if (! Auth::check()) {
-            session()->flash('error', 'Please register or log in to upload your CV.');
-            $this->loading = false;
-
-            return;
-        }
-
         $this->loading = true;
 
         try {
@@ -45,11 +38,20 @@ class CvUpload extends Component
             $result = Lai::summarize($this->cvText);
             $this->summary = $result['candidate_cv_summary'];
 
-            // Save to the candidate record
-            $candidate = Candidate::firstOrCreate(
-                ['user_id' => Auth::id()],
-                ['cv' => '', 'bio' => '']
-            );
+            // Save to candidate record (works for both auth and guest users)
+            if (Auth::check()) {
+                $candidate = Candidate::firstOrCreate(
+                    ['user_id' => Auth::id()],
+                    ['cv' => '', 'bio' => '']
+                );
+            } else {
+                // Guest users: store by session; user_id is nullable
+                $sessionId = session()->getId();
+                $candidate = Candidate::firstOrCreate(
+                    ['session_id' => $sessionId],
+                    ['user_id' => null, 'cv' => '', 'bio' => '']
+                );
+            }
 
             $candidate->update([
                 'cv' => $this->cvText,
@@ -70,7 +72,11 @@ class CvUpload extends Component
         $this->cvText = '';
         $this->summary = '';
 
-        Candidate::where('user_id', Auth::id())->delete();
+        if (Auth::check()) {
+            Candidate::where('user_id', Auth::id())->delete();
+        } else {
+            Candidate::where('session_id', session()->getId())->delete();
+        }
     }
 
     protected function extractText(): string
@@ -115,11 +121,12 @@ class CvUpload extends Component
 
         if (Auth::check()) {
             $candidate = Candidate::where('user_id', Auth::id())->first();
+        } else {
+            $candidate = Candidate::where('session_id', session()->getId())->first();
         }
 
         return view('livewire.cv-upload', [
             'candidate' => $candidate,
-            'authenticated' => Auth::check(),
         ]);
     }
 }
