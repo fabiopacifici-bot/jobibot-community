@@ -169,3 +169,17 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 - To filter on a particular test name: `php artisan test --compact --filter=testName` (recommended after making a change to a related file).
 
 </laravel-boost-guidelines>
+
+## Codebase Architecture
+
+For a complete architectural overview, design decisions, and directory structure, read **[ADR.md](./ADR.md)**.
+
+### Quick Scan (for new agents)
+
+- **Framework:** Laravel 13 + Livewire 4 + NativePHP 2.2 + Tailwind CSS 4
+- **AI Engine:** Provider-agnostic `Lai` facade → `LaiProviderInterface` (OpenAI, Ollama, PrivateAI)
+- **Key dirs:** `app/JobiBot/` (AI engine), `app/Livewire/` (components), `app/Models/` (5 models)
+- **Entry point:** `routes/web.php` → 5 routes → Livewire full-page components
+- **Testing:** PEST, `RefreshDatabase` trait, feature + unit tests
+- **Build:** NativePHP desktop (Linux/macOS/Windows) + mobile (Android .apk)
+- **CI/CD:** GitHub Actions for tests, lint, native builds, and releases
