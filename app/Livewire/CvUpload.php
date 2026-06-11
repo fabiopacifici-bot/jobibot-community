@@ -119,10 +119,15 @@ class CvUpload extends Component
     {
         $candidate = null;
 
-        if (Auth::check()) {
-            $candidate = Candidate::where('user_id', Auth::id())->first();
-        } else {
-            $candidate = Candidate::where('session_id', session()->getId())->first();
+        try {
+            if (Auth::check()) {
+                $candidate = Candidate::where('user_id', Auth::id())->first();
+            } else {
+                $candidate = Candidate::where('session_id', session()->getId())->first();
+            }
+        } catch (\Illuminate\Database\QueryException $e) {
+            // Database not yet migrated (fresh install) — will be handled by auto-migration
+            $candidate = null;
         }
 
         return view('livewire.cv-upload', [
