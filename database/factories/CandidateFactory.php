@@ -17,9 +17,9 @@ class CandidateFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'cv'      => fake()->paragraphs(5, true),
+            'cv' => fake()->paragraphs(5, true),
             'cv_path' => null,
-            'bio'     => fake()->sentence(10),
+            'bio' => fake()->sentence(10),
         ];
     }
 }

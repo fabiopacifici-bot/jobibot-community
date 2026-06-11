@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Console\Commands\InstallCommand;
 use App\JobiBot\LaiProviderInterface;
 use App\JobiBot\Providers\OllamaProvider;
 use App\JobiBot\Providers\OpenAIProvider;
@@ -13,7 +14,7 @@ class JobiBotServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(
-            __DIR__ . '/../../config/jobibot.php',
+            __DIR__.'/../../config/jobibot.php',
             'jobibot'
         );
 
@@ -43,7 +44,7 @@ class JobiBotServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                \App\Console\Commands\InstallCommand::class,
+                InstallCommand::class,
             ]);
         }
     }

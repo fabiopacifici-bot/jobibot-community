@@ -18,9 +18,9 @@ class OpenAIProvider implements LaiProviderInterface
     public function chat(array $messages, array $options = []): array
     {
         $payload = [
-            'model'       => $options['model'] ?? $this->defaultModel,
+            'model' => $options['model'] ?? $this->defaultModel,
             'temperature' => $options['temperature'] ?? 0.6,
-            'messages'    => $messages,
+            'messages' => $messages,
         ];
 
         if (isset($options['max_tokens'])) {
@@ -34,7 +34,7 @@ class OpenAIProvider implements LaiProviderInterface
         if ($response->failed()) {
             Log::error('OpenAIProvider error', [
                 'status' => $response->status(),
-                'body'   => $response->body(),
+                'body' => $response->body(),
             ]);
             throw new LaiException(
                 $response->json('error.message') ?? 'OpenAI request failed',
@@ -46,7 +46,7 @@ class OpenAIProvider implements LaiProviderInterface
 
         return [
             'content' => $data['choices'][0]['message']['content'],
-            'usage'   => $data['usage'] ?? null,
+            'usage' => $data['usage'] ?? null,
         ];
     }
 

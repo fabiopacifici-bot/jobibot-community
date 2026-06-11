@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\JobiBot\Lai;
 use App\Models\JobAdvertisement;
 use Illuminate\Support\Facades\Http;
 use Livewire\Component;
@@ -10,8 +9,11 @@ use Livewire\Component;
 class JobSearch extends Component
 {
     public string $searchTerm = '';
+
     public array $jobs = [];
+
     public ?array $selectedJob = null;
+
     public bool $loading = false;
 
     public function updatedSearchTerm(): void
@@ -31,14 +33,14 @@ class JobSearch extends Component
             $response = Http::timeout(15)
                 ->get(config('jobibot.remotive_api_url'), [
                     'search' => $this->searchTerm,
-                    'limit'  => 20,
+                    'limit' => 20,
                 ]);
 
             if ($response->successful()) {
                 $this->jobs = $response->json('jobs', []);
             }
         } catch (\Throwable $e) {
-            session()->flash('error', 'Job search unavailable: ' . $e->getMessage());
+            session()->flash('error', 'Job search unavailable: '.$e->getMessage());
         } finally {
             $this->loading = false;
         }
@@ -52,13 +54,13 @@ class JobSearch extends Component
         JobAdvertisement::firstOrCreate(
             ['source_url' => $job['url'] ?? ''],
             [
-                'title'        => $job['title'] ?? 'Untitled',
-                'type'         => $job['job_type'] ?? 'Fulltime',
-                'salary'       => $job['salary'] ?? null,
-                'work_from'    => 'Remote',
-                'description'  => $job['description'] ?? '',
+                'title' => $job['title'] ?? 'Untitled',
+                'type' => $job['job_type'] ?? 'Fulltime',
+                'salary' => $job['salary'] ?? null,
+                'work_from' => 'Remote',
+                'description' => $job['description'] ?? '',
                 'requirements' => implode("\n", $job['tags'] ?? []),
-                'source'       => 'remotive',
+                'source' => 'remotive',
             ]
         );
     }

@@ -22,9 +22,9 @@ class PrivateAIProvider implements LaiProviderInterface
     public function chat(array $messages, array $options = []): array
     {
         $payload = [
-            'model'       => $options['model'] ?? $this->defaultModel,
+            'model' => $options['model'] ?? $this->defaultModel,
             'temperature' => $options['temperature'] ?? 0.6,
-            'messages'    => $messages,
+            'messages' => $messages,
         ];
 
         if (isset($options['max_tokens'])) {
@@ -42,10 +42,10 @@ class PrivateAIProvider implements LaiProviderInterface
         if ($response->failed()) {
             Log::error('PrivateAIProvider error', [
                 'status' => $response->status(),
-                'body'   => $response->body(),
+                'body' => $response->body(),
             ]);
             throw new LaiException(
-                'Private AI server request failed: ' . $response->body(),
+                'Private AI server request failed: '.$response->body(),
                 $response->status()
             );
         }
@@ -54,7 +54,7 @@ class PrivateAIProvider implements LaiProviderInterface
 
         return [
             'content' => $data['choices'][0]['message']['content'],
-            'usage'   => $data['usage'] ?? null,
+            'usage' => $data['usage'] ?? null,
         ];
     }
 

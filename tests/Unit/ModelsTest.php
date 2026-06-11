@@ -13,8 +13,8 @@ test('candidate belongs to user', function () {
     $user = User::factory()->create();
     $candidate = Candidate::create([
         'user_id' => $user->id,
-        'cv'      => 'Test CV content',
-        'bio'     => 'Software developer',
+        'cv' => 'Test CV content',
+        'bio' => 'Software developer',
     ]);
 
     expect($candidate->user->id)->toBe($user->id);
@@ -25,7 +25,7 @@ test('candidate has simulations', function () {
     $candidate = Candidate::create(['user_id' => $user->id]);
     $simulation = Simulation::create([
         'candidate_id' => $candidate->id,
-        'status'       => 'pending',
+        'status' => 'pending',
     ]);
 
     expect($candidate->simulations)->toHaveCount(1);
@@ -37,7 +37,7 @@ test('simulation has uuid', function () {
     $candidate = Candidate::create(['user_id' => $user->id]);
     $simulation = Simulation::create([
         'candidate_id' => $candidate->id,
-        'status'       => 'in_progress',
+        'status' => 'in_progress',
     ]);
 
     expect($simulation->uuid)->not->toBeNull();
@@ -50,19 +50,19 @@ test('simulation has messages', function () {
     $candidate = Candidate::create(['user_id' => $user->id]);
     $simulation = Simulation::create([
         'candidate_id' => $candidate->id,
-        'status'       => 'in_progress',
+        'status' => 'in_progress',
     ]);
 
     SimulationMessage::create([
         'simulation_id' => $simulation->id,
-        'role'          => 'user',
-        'content'       => 'Hello, I am ready for the interview.',
+        'role' => 'user',
+        'content' => 'Hello, I am ready for the interview.',
     ]);
 
     SimulationMessage::create([
         'simulation_id' => $simulation->id,
-        'role'          => 'assistant',
-        'content'       => 'Great! Let us begin.',
+        'role' => 'assistant',
+        'content' => 'Great! Let us begin.',
     ]);
 
     expect($simulation->messages)->toHaveCount(2);
@@ -72,19 +72,19 @@ test('job advertisement has simulations', function () {
     $user = User::factory()->create();
     $candidate = Candidate::create(['user_id' => $user->id]);
     $job = JobAdvertisement::create([
-        'title'        => 'Laravel Developer',
-        'type'         => 'Fulltime',
-        'work_from'    => 'Remote',
-        'description'  => 'Build APIs with Laravel',
+        'title' => 'Laravel Developer',
+        'type' => 'Fulltime',
+        'work_from' => 'Remote',
+        'description' => 'Build APIs with Laravel',
         'requirements' => 'PHP, Laravel, MySQL',
-        'source'       => 'manual',
+        'source' => 'manual',
     ]);
 
     Simulation::create([
-        'candidate_id'        => $candidate->id,
+        'candidate_id' => $candidate->id,
         'job_advertisement_id' => $job->id,
-        'status'              => 'completed',
-        'simulation_score'    => 85,
+        'status' => 'completed',
+        'simulation_score' => 85,
     ]);
 
     expect($job->simulations)->toHaveCount(1);
@@ -95,10 +95,10 @@ test('simulation scoring', function () {
     $user = User::factory()->create();
     $candidate = Candidate::create(['user_id' => $user->id]);
     $simulation = Simulation::create([
-        'candidate_id'     => $candidate->id,
-        'status'           => 'completed',
+        'candidate_id' => $candidate->id,
+        'status' => 'completed',
         'simulation_score' => 92,
-        'considerations'   => 'Excellent technical answers.',
+        'considerations' => 'Excellent technical answers.',
     ]);
 
     expect($simulation->status)->toBe('completed');
@@ -111,7 +111,7 @@ test('cv match score is nullable', function () {
     $candidate = Candidate::create(['user_id' => $user->id]);
     $simulation = Simulation::create([
         'candidate_id' => $candidate->id,
-        'status'       => 'pending',
+        'status' => 'pending',
     ]);
 
     expect($simulation->cv_match_score)->toBeNull();

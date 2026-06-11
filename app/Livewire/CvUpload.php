@@ -2,26 +2,29 @@
 
 namespace App\Livewire;
 
-use App\JobiBot\Lai;
 use App\JobiBot\Exceptions\LaiException;
+use App\JobiBot\Lai;
 use App\Models\Candidate;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\Auth;
 
 class CvUpload extends Component
 {
     use WithFileUploads;
 
     public $cv;
+
     public $cvText = '';
+
     public $summary = '';
+
     public $loading = false;
 
     public function updatedCv(): void
     {
         $this->validate([
-            'cv' => 'file|mimes:pdf,doc,docx,txt|max:' . (config('jobibot.cv_max_size_kb', 5120)),
+            'cv' => 'file|mimes:pdf,doc,docx,txt|max:'.(config('jobibot.cv_max_size_kb', 5120)),
         ]);
 
         $this->loading = true;
@@ -42,13 +45,13 @@ class CvUpload extends Component
             );
 
             $candidate->update([
-                'cv'      => $this->cvText,
+                'cv' => $this->cvText,
                 'cv_path' => $this->cv->store('cvs', config('jobibot.cv_disk', 'local')),
-                'bio'     => $this->summary,
+                'bio' => $this->summary,
             ]);
 
         } catch (LaiException $e) {
-            session()->flash('error', 'AI summarization failed: ' . $e->getMessage());
+            session()->flash('error', 'AI summarization failed: '.$e->getMessage());
         } finally {
             $this->loading = false;
         }
@@ -77,15 +80,15 @@ class CvUpload extends Component
         }
 
         // For doc/docx, return a note — full parsing needs a library
-        return '(Document uploaded: ' . $this->cv->getClientOriginalName() . '). '
-            . 'For best results, use .txt or .pdf format. '
-            . 'Content: ' . substr(strip_tags(file_get_contents($path) ?: ''), 0, 5000);
+        return '(Document uploaded: '.$this->cv->getClientOriginalName().'). '
+            .'For best results, use .txt or .pdf format. '
+            .'Content: '.substr(strip_tags(file_get_contents($path) ?: ''), 0, 5000);
     }
 
     protected function extractPdfText(string $path): string
     {
         // Simple PDF text extraction using pdftotext if available
-        $output = shell_exec('pdftotext ' . escapeshellarg($path) . ' - 2>/dev/null');
+        $output = shell_exec('pdftotext '.escapeshellarg($path).' - 2>/dev/null');
         if ($output) {
             return mb_substr($output, 0, 10000);
         }
@@ -95,12 +98,14 @@ class CvUpload extends Component
         // Strip binary noise
         $text = preg_replace('/[^\x20-\x7E\x0A\x0D]/', ' ', $content);
         $text = preg_replace('/\s+/', ' ', $text);
+
         return mb_substr(trim($text), 0, 5000);
     }
 
     public function render()
     {
         $candidate = Candidate::where('user_id', Auth::id())->first();
+
         return view('livewire.cv-upload', [
             'candidate' => $candidate,
         ]);

@@ -17,9 +17,9 @@ class OllamaProvider implements LaiProviderInterface
     public function chat(array $messages, array $options = []): array
     {
         $payload = [
-            'model'    => $options['model'] ?? $this->defaultModel,
+            'model' => $options['model'] ?? $this->defaultModel,
             'messages' => $messages,
-            'stream'   => false,
+            'stream' => false,
         ];
 
         if (isset($options['temperature'])) {
@@ -32,10 +32,10 @@ class OllamaProvider implements LaiProviderInterface
         if ($response->failed()) {
             Log::error('OllamaProvider error', [
                 'status' => $response->status(),
-                'body'   => $response->body(),
+                'body' => $response->body(),
             ]);
             throw new LaiException(
-                'Ollama request failed: ' . $response->body(),
+                'Ollama request failed: '.$response->body(),
                 $response->status()
             );
         }
@@ -44,8 +44,8 @@ class OllamaProvider implements LaiProviderInterface
 
         return [
             'content' => $data['message']['content'],
-            'usage'   => [
-                'total_tokens'  => $data['eval_count'] ?? 0,
+            'usage' => [
+                'total_tokens' => $data['eval_count'] ?? 0,
                 'prompt_tokens' => $data['prompt_eval_count'] ?? 0,
             ],
         ];

@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Candidate;
 use App\Models\Simulation;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -14,7 +15,7 @@ class Dashboard extends Component
         $candidate = null;
 
         if (Auth::check()) {
-            $candidate = \App\Models\Candidate::where('user_id', Auth::id())->first();
+            $candidate = Candidate::where('user_id', Auth::id())->first();
             if ($candidate) {
                 $simulations = Simulation::where('candidate_id', $candidate->id)
                     ->with('messages')
@@ -25,11 +26,11 @@ class Dashboard extends Component
         }
 
         return view('livewire.dashboard', [
-            'candidate'    => $candidate,
-            'simulations'  => $simulations,
-            'totalSims'    => $simulations->count(),
-            'completedSims'=> $simulations->where('status', 'completed')->count(),
-            'avgScore'     => $simulations->where('status', 'completed')->avg('simulation_score'),
+            'candidate' => $candidate,
+            'simulations' => $simulations,
+            'totalSims' => $simulations->count(),
+            'completedSims' => $simulations->where('status', 'completed')->count(),
+            'avgScore' => $simulations->where('status', 'completed')->avg('simulation_score'),
         ]);
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 class InstallCommand extends Command
 {
     protected $signature = 'jobibot:install';
+
     protected $description = 'Install JobiBot Community Edition — run migrations and seed defaults';
 
     public function handle(): int

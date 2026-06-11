@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\JobiBot\LaiProviderInterface;
 use App\JobiBot\Providers\OllamaProvider;
 use App\JobiBot\Providers\OpenAIProvider;
 use App\JobiBot\Providers\PrivateAIProvider;
@@ -11,26 +10,31 @@ use Livewire\Component;
 class Settings extends Component
 {
     public string $provider = 'openai';
+
     public string $model = 'gpt-4o';
+
     public string $apiKey = '';
+
     public string $baseUrl = '';
+
     public bool $providerHealthy = false;
+
     public string $healthMessage = '';
 
     public function mount(): void
     {
         $this->provider = config('jobibot.provider', 'openai');
-        $this->model    = config('jobibot.model', 'gpt-4o');
+        $this->model = config('jobibot.model', 'gpt-4o');
 
         if ($this->provider === 'openai') {
-            $this->apiKey  = config('jobibot.providers.openai.api_key', '');
+            $this->apiKey = config('jobibot.providers.openai.api_key', '');
             $this->baseUrl = config('jobibot.providers.openai.base_url', 'https://api.openai.com/v1');
         } elseif ($this->provider === 'ollama') {
             $this->baseUrl = config('jobibot.providers.ollama.base_url', 'http://localhost:11434');
-            $this->model   = config('jobibot.providers.ollama.model', 'gemma3');
+            $this->model = config('jobibot.providers.ollama.model', 'gemma3');
         } elseif ($this->provider === 'privateai') {
             $this->baseUrl = config('jobibot.providers.privateai.base_url', 'http://localhost:8005');
-            $this->model   = config('jobibot.providers.privateai.model', 'qwen3-7b');
+            $this->model = config('jobibot.providers.privateai.model', 'qwen3-7b');
         }
     }
 
@@ -39,13 +43,13 @@ class Settings extends Component
         // Set sensible defaults when switching providers
         if ($value === 'ollama') {
             $this->baseUrl = 'http://localhost:11434';
-            $this->model   = 'gemma3';
+            $this->model = 'gemma3';
         } elseif ($value === 'privateai') {
             $this->baseUrl = 'http://localhost:8005';
-            $this->model   = 'qwen3-7b';
+            $this->model = 'qwen3-7b';
         } else {
             $this->baseUrl = 'https://api.openai.com/v1';
-            $this->model   = 'gpt-4o';
+            $this->model = 'gpt-4o';
         }
     }
 
@@ -65,9 +69,9 @@ class Settings extends Component
 
         // Refresh config
         config([
-            'jobibot.provider'                  => $this->provider,
-            'jobibot.model'                     => $this->model,
-            'jobibot.providers.openai.api_key'  => $this->apiKey,
+            'jobibot.provider' => $this->provider,
+            'jobibot.model' => $this->model,
+            'jobibot.providers.openai.api_key' => $this->apiKey,
             'jobibot.providers.openai.base_url' => $this->baseUrl,
             'jobibot.providers.ollama.base_url' => $this->baseUrl,
             'jobibot.providers.privateai.base_url' => $this->baseUrl,
@@ -79,9 +83,9 @@ class Settings extends Component
     public function testConnection(): void
     {
         $provider = match ($this->provider) {
-            'ollama'    => new OllamaProvider(baseUrl: $this->baseUrl, defaultModel: $this->model),
+            'ollama' => new OllamaProvider(baseUrl: $this->baseUrl, defaultModel: $this->model),
             'privateai' => new PrivateAIProvider(baseUrl: $this->baseUrl, defaultModel: $this->model),
-            default     => new OpenAIProvider(apiKey: $this->apiKey, baseUrl: $this->baseUrl, defaultModel: $this->model),
+            default => new OpenAIProvider(apiKey: $this->apiKey, baseUrl: $this->baseUrl, defaultModel: $this->model),
         };
 
         $this->providerHealthy = $provider->health();

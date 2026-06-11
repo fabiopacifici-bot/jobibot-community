@@ -3,6 +3,7 @@
 namespace App\JobiBot;
 
 use App\JobiBot\Exceptions\LaiException;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -161,7 +162,7 @@ EOT,
         $summary = self::summarize($cvText);
 
         return [
-            'job_match_percent'   => $cvMatch['match_percentage'],
+            'job_match_percent' => $cvMatch['match_percentage'],
             'candidate_cv_summary' => $summary['candidate_cv_summary'],
         ];
     }
@@ -169,7 +170,7 @@ EOT,
     /**
      * Score a completed interview simulation.
      *
-     * @param  array  $job           Job advertisement data
+     * @param  array  $job  Job advertisement data
      * @param  array  $conversation  Full conversation history
      * @return array{status: string, simulation_score: mixed, considerations: mixed}
      */
@@ -180,8 +181,8 @@ EOT,
         $result = self::provider()->chat(
             [
                 ['role' => 'system', 'content' => self::$scoreSys],
-                ['role' => 'user', 'content' => $delimiter . json_encode($job) . $delimiter],
-                ['role' => 'user', 'content' => $delimiter . 'Interview Simulation:' . json_encode($conversation) . $delimiter],
+                ['role' => 'user', 'content' => $delimiter.json_encode($job).$delimiter],
+                ['role' => 'user', 'content' => $delimiter.'Interview Simulation:'.json_encode($conversation).$delimiter],
             ],
             ['temperature' => self::temperature(), 'model' => self::model()]
         );
@@ -194,9 +195,9 @@ EOT,
         }
 
         return [
-            'status'           => 'completed',
+            'status' => 'completed',
             'simulation_score' => $scoreResults['score'],
-            'considerations'   => $scoreResults['considerations'],
+            'considerations' => $scoreResults['considerations'],
         ];
     }
 
@@ -270,7 +271,7 @@ EOT,
         }
 
         try {
-            $response = \Illuminate\Support\Facades\Http::withToken(
+            $response = Http::withToken(
                 config('jobibot.providers.openai.api_key')
             )
                 ->timeout(10)
@@ -304,9 +305,9 @@ EOT,
         );
 
         return [
-            'usage'        => $result['usage'] ?? ['total_tokens' => 0],
+            'usage' => $result['usage'] ?? ['total_tokens' => 0],
             'reply_message' => [
-                'role'    => 'assistant',
+                'role' => 'assistant',
                 'content' => $result['content'],
             ],
         ];
@@ -329,7 +330,7 @@ EOT,
             [
                 [
                     'role' => 'system',
-                    'content' => <<<EOT
+                    'content' => <<<'EOT'
 You are LAI, Jobibot's AI assistant. Your primary task here is to help one of our clients with
 the generation of a job advertisement. You will be provided the company name, the bio and either
 a job title a description or both. Your task is to craft a comprehensive job post. Return the

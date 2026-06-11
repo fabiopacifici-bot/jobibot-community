@@ -2,6 +2,8 @@
 
 namespace App\JobiBot;
 
+use App\JobiBot\Exceptions\LaiException;
+
 interface LaiProviderInterface
 {
     /**
@@ -11,7 +13,7 @@ interface LaiProviderInterface
      * @param  array{model?: string, temperature?: float, max_tokens?: int}  $options
      * @return array{content: string, usage?: array{total_tokens: int}}
      *
-     * @throws \App\JobiBot\Exceptions\LaiException
+     * @throws LaiException
      */
     public function chat(array $messages, array $options = []): array;
 
@@ -19,7 +21,6 @@ interface LaiProviderInterface
      * Send a text completion request (simpler interface).
      *
      * @param  array{model?: string, temperature?: float}  $options
-     * @return string
      */
     public function complete(string $prompt, array $options = []): string;
 

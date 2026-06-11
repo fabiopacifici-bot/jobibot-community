@@ -10,6 +10,7 @@ use App\Models\JobAdvertisement;
 use App\Models\Simulation;
 use App\Models\SimulationMessage;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 
@@ -22,7 +23,7 @@ test('candidate with no simulations returns empty collection', function () {
     $candidate = Candidate::create(['user_id' => $user->id]);
 
     expect($candidate->simulations)->toBeEmpty();
-    expect($candidate->simulations)->toBeInstanceOf(\Illuminate\Database\Eloquent\Collection::class);
+    expect($candidate->simulations)->toBeInstanceOf(Collection::class);
 });
 
 test('simulation uuid auto-generates on creation', function () {
@@ -31,7 +32,7 @@ test('simulation uuid auto-generates on creation', function () {
 
     $simulation = Simulation::create([
         'candidate_id' => $candidate->id,
-        'status'       => 'pending',
+        'status' => 'pending',
     ]);
 
     expect($simulation->uuid)->not->toBeNull();
@@ -45,8 +46,8 @@ test('simulation uuid is not overwritten if already set', function () {
 
     $simulation = Simulation::create([
         'candidate_id' => $candidate->id,
-        'status'       => 'pending',
-        'uuid'         => $customUuid,
+        'status' => 'pending',
+        'uuid' => $customUuid,
     ]);
 
     // UUID is not in $fillable, so mass assignment does not set it.
@@ -62,7 +63,7 @@ test('accepted simulation statuses are stored correctly', function () {
     foreach ($statuses as $status) {
         $simulation = Simulation::create([
             'candidate_id' => $candidate->id,
-            'status'       => $status,
+            'status' => $status,
         ]);
         expect($simulation->status)->toBe($status);
     }
@@ -70,12 +71,12 @@ test('accepted simulation statuses are stored correctly', function () {
 
 test('job advertisement handles nullable fields', function () {
     $job = JobAdvertisement::create([
-        'title'        => 'Laravel Developer',
-        'type'         => 'Fulltime',
-        'work_from'    => 'Remote',
-        'description'  => 'Build APIs',
+        'title' => 'Laravel Developer',
+        'type' => 'Fulltime',
+        'work_from' => 'Remote',
+        'description' => 'Build APIs',
         'requirements' => 'PHP, Laravel',
-        'source'       => 'manual',
+        'source' => 'manual',
     ]);
 
     expect($job->salary)->toBeNull();
@@ -98,8 +99,8 @@ test('simulation with maximum valid score', function () {
     $candidate = Candidate::create(['user_id' => $user->id]);
 
     $simulation = Simulation::create([
-        'candidate_id'     => $candidate->id,
-        'status'           => 'completed',
+        'candidate_id' => $candidate->id,
+        'status' => 'completed',
         'simulation_score' => 100,
     ]);
 
@@ -111,8 +112,8 @@ test('simulation with zero score', function () {
     $candidate = Candidate::create(['user_id' => $user->id]);
 
     $simulation = Simulation::create([
-        'candidate_id'     => $candidate->id,
-        'status'           => 'completed',
+        'candidate_id' => $candidate->id,
+        'status' => 'completed',
         'simulation_score' => 0,
     ]);
 
@@ -135,13 +136,13 @@ test('simulation messages cascade on simulation delete', function () {
     $candidate = Candidate::create(['user_id' => $user->id]);
     $simulation = Simulation::create([
         'candidate_id' => $candidate->id,
-        'status'       => 'in_progress',
+        'status' => 'in_progress',
     ]);
 
     SimulationMessage::create([
         'simulation_id' => $simulation->id,
-        'role'          => 'user',
-        'content'       => 'Test message',
+        'role' => 'user',
+        'content' => 'Test message',
     ]);
 
     expect(SimulationMessage::count())->toBe(1);
