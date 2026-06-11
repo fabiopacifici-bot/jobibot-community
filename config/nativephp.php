@@ -31,22 +31,13 @@ return [
     /**
      * The author of your application.
      */
-    'author' => env('NATIVEPHP_APP_AUTHOR'),
+    'author' => env('NATIVEPHP_APP_AUTHOR', 'JobiBot Community'),
 
-    /**
-     * The copyright notice for your application.
-     */
-    'copyright' => env('NATIVEPHP_APP_COPYRIGHT'),
+    'copyright' => env('NATIVEPHP_APP_COPYRIGHT', 'Copyright © '.date('Y').' JobiBot Community'),
 
-    /**
-     * The description of your application.
-     */
-    'description' => env('NATIVEPHP_APP_DESCRIPTION', 'An awesome app built with NativePHP'),
+    'description' => env('NATIVEPHP_APP_DESCRIPTION', 'AI-powered job interview coach and CV analyzer'),
 
-    /**
-     * The Website of your application.
-     */
-    'website' => env('NATIVEPHP_APP_WEBSITE', 'https://nativephp.com'),
+    'website' => env('NATIVEPHP_APP_WEBSITE', 'https://github.com/fabiopacifici-bot/jobibot-community'),
 
     /**
      * The default service provider for your application. This provider
@@ -106,7 +97,7 @@ return [
          * Supported: "github", "s3", "spaces"
          * Note: The "s3" provider is compatible with S3-compatible services like Cloudflare R2.
          */
-        'default' => env('NATIVEPHP_UPDATER_PROVIDER', 'spaces'),
+        'default' => env('NATIVEPHP_UPDATER_PROVIDER', 'github'),
 
         'providers' => [
             'github' => [
@@ -118,7 +109,7 @@ return [
                 'private' => env('GITHUB_PRIVATE', false),
                 'autoupdate_token' => env('GITHUB_AUTOUPDATE_TOKEN'), // Read-only token used by the updater for private repos
                 'channel' => env('GITHUB_CHANNEL', 'latest'),
-                'releaseType' => env('GITHUB_RELEASE_TYPE', 'draft'),
+                'releaseType' => env('GITHUB_RELEASE_TYPE', 'release'),
             ],
 
             's3' => [
@@ -178,7 +169,7 @@ return [
      * @see https://www.electron.build/generated/nsisoptions
      */
     'nsis' => [
-        'delete_app_data_on_uninstall' => env('NATIVEPHP_NSIS_DELETE_APP_DATA', false),
+        'delete_app_data_on_uninstall' => env('NATIVEPHP_NSIS_DELETE_APP_DATA', true),
     ],
 
     /**

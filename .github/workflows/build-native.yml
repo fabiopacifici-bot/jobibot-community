@@ -42,6 +42,11 @@ jobs:
       - name: Install NativePHP
         run: php artisan native:install --no-interaction
 
+      - name: Configure NSIS installer (custom install location picker)
+        run: |
+          sed -i 's/deleteAppDataOnUninstall: deleteAppDataOnUninstall,/deleteAppDataOnUninstall: deleteAppDataOnUninstall,\n        oneClick: false,\n        allowToChangeInstallationDirectory: true,/' nativephp/electron/electron-builder.mjs
+          grep "oneClick\|allowToChange" nativephp/electron/electron-builder.mjs
+
       - name: Build NativePHP desktop
         run: php artisan native:build linux --no-interaction
 
@@ -131,6 +136,11 @@ jobs:
 
       - name: Install NativePHP
         run: php artisan native:install --no-interaction
+
+      - name: Configure NSIS installer (custom install location picker)
+        run: |
+          sed -i 's/deleteAppDataOnUninstall: deleteAppDataOnUninstall,/deleteAppDataOnUninstall: deleteAppDataOnUninstall,\n        oneClick: false,\n        allowToChangeInstallationDirectory: true,/' nativephp/electron/electron-builder.mjs
+          grep "oneClick\|allowToChange" nativephp/electron/electron-builder.mjs
 
       - name: Build NativePHP desktop
         run: php artisan native:build win --no-interaction
