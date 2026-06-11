@@ -192,9 +192,9 @@ jobs:
       - name: Fix Android placeholders
         run: |
           GRADLE_FILE="nativephp/android/app/build.gradle.kts"
-          sed -i 's/REPLACE_COMPILE_SDK/34/g' "$GRADLE_FILE"
+          sed -i 's/REPLACE_COMPILE_SDK/36/g' "$GRADLE_FILE"
           sed -i 's/REPLACE_MIN_SDK/24/g' "$GRADLE_FILE"
-          sed -i 's/REPLACE_TARGET_SDK/34/g' "$GRADLE_FILE"
+          sed -i 's/REPLACE_TARGET_SDK/36/g' "$GRADLE_FILE"
           sed -i 's/REPLACE_APP_ID/ai.jobibot.community/g' "$GRADLE_FILE"
           sed -i 's/REPLACEMECODE/1/g' "$GRADLE_FILE"
           sed -i 's/REPLACEME/1.0.0/g' "$GRADLE_FILE"
