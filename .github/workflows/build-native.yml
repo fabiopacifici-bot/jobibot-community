@@ -136,8 +136,9 @@ jobs:
 
       - name: Configure NSIS installer (custom install location picker)
         run: |
-          sed -i 's/deleteAppDataOnUninstall: deleteAppDataOnUninstall,/deleteAppDataOnUninstall: deleteAppDataOnUninstall,\n        oneClick: false,\n        allowToChangeInstallationDirectory: true,/' nativephp/electron/electron-builder.mjs
-          grep "oneClick\|allowToChange" nativephp/electron/electron-builder.mjs
+          # NativePHP uses vendor file unless published to nativephp/electron/
+          sed -i 's/deleteAppDataOnUninstall: deleteAppDataOnUninstall,/deleteAppDataOnUninstall: deleteAppDataOnUninstall,\n        oneClick: false,\n        allowToChangeInstallationDirectory: true,/' vendor/nativephp/desktop/resources/electron/electron-builder.mjs
+          grep "oneClick\|allowToChange" vendor/nativephp/desktop/resources/electron/electron-builder.mjs
 
       - name: Build NativePHP desktop
         run: php artisan native:build win --no-interaction
