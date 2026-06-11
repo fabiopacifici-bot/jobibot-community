@@ -127,7 +127,6 @@ class CvUpload extends Component
 
         return view('livewire.cv-upload', [
             'candidate' => $candidate,
-            'authenticated' => Auth::check(),
         ]);
     }
 }
