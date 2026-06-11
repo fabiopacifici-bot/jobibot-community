@@ -1,4 +1,4 @@
-name: Build Native Artifacts
+name: Build & Release
 
 on:
   workflow_dispatch:
@@ -7,27 +7,9 @@ on:
       - 'v*'
 
 jobs:
-  desktop:
-    name: Desktop — ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        include:
-          - os: ubuntu-latest
-            build-os: linux
-            artifact-name: jobibot-linux
-            asset-name: JobiBot-Community-linux
-          - os: macos-latest
-            build-os: mac
-            artifact-name: jobibot-macos
-            asset-name: JobiBot-Community-macos
-          - os: windows-latest
-            build-os: win
-            artifact-name: jobibot-windows
-            asset-name: JobiBot-Community-windows
-
+  desktop-linux:
+    name: Desktop — Linux
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -61,10 +43,152 @@ jobs:
         run: php artisan native:install --no-interaction
 
       - name: Build NativePHP desktop
-        run: php artisan native:build ${{ matrix.build-os }} --no-interaction
+        run: php artisan native:build linux --no-interaction
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact-name }}
+          name: jobibot-linux
           path: dist/*
+
+  desktop-macos:
+    name: Desktop — macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: dom, curl, libxml, mbstring, zip, fileinfo
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install PHP dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Build frontend assets
+        run: npm run build
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Install NativePHP
+        run: php artisan native:install --no-interaction
+
+      - name: Build NativePHP desktop
+        run: php artisan native:build mac --no-interaction
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jobibot-macos
+          path: dist/*
+
+  desktop-windows:
+    name: Desktop — Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: dom, curl, libxml, mbstring, zip, fileinfo
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install PHP dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Build frontend assets
+        run: npm run build
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Install NativePHP
+        run: php artisan native:install --no-interaction
+
+      - name: Build NativePHP desktop
+        run: php artisan native:build win --no-interaction
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jobibot-windows
+          path: dist/*
+
+  release:
+    name: Create Release
+    needs: [desktop-linux, desktop-macos, desktop-windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          if [ -z "$PREV_TAG" ]; then
+            git log --oneline --no-decorate > CHANGELOG.md
+          else
+            git log --oneline --no-decorate ${PREV_TAG}..HEAD > CHANGELOG.md
+          fi
+          {
+            echo 'changelog<<EOF'
+            cat CHANGELOG.md
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist/
+
+      - name: Display artifacts
+        run: ls -R dist/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "JobiBot Community ${{ github.ref_name }}"
+          tag_name: ${{ github.ref_name }}
+          body: |
+            ## JobiBot Community Edition ${{ github.ref_name }}
+
+            ### Changes
+            ${{ steps.changelog.outputs.changelog }}
+
+            ### Downloads
+            Desktop builds for Linux, macOS, and Windows.
+          files: dist/**/*
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: *** secrets.GITHUB_TOKEN }}
