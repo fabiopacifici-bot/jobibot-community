@@ -201,6 +201,8 @@ jobs:
           sed -i 's/REPLACE_MINIFY_ENABLED/false/g' "$GRADLE_FILE"
           sed -i 's/REPLACE_SHRINK_RESOURCES/false/g' "$GRADLE_FILE"
           sed -i 's/REPLACE_DEBUG_SYMBOLS/none/g' "$GRADLE_FILE"
+          # Fix sdk.dir
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > nativephp/android/local.properties
           # Fix launcher label
           MANIFEST="nativephp/android/app/src/main/AndroidManifest.xml"
           sed -i 's/android:label="NativePHP"/android:label="JobiBot"/g' "$MANIFEST"
