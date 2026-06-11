@@ -7,23 +7,23 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 test('dashboard loads', function () {
-    $this->get('/')->assertStatus(200)->assertSee('JobiBot');
+    $this->withoutVite()->get('/')->assertStatus(200)->assertSee('JobiBot');
 });
 
 test('cv page loads', function () {
-    $this->get('/cv')->assertStatus(200)->assertSee('Upload Your CV');
+    $this->withoutVite()->get('/cv')->assertStatus(200)->assertSee('Upload Your CV');
 });
 
 test('jobs page loads', function () {
-    $this->get('/jobs')->assertStatus(200)->assertSee('Job Search');
+    $this->withoutVite()->get('/jobs')->assertStatus(200)->assertSee('Job Search');
 });
 
 test('interview page loads', function () {
-    $this->get('/interview')->assertStatus(200)->assertSee('Interview Simulation');
+    $this->withoutVite()->get('/interview')->assertStatus(200)->assertSee('Interview Simulation');
 });
 
 test('settings page loads', function () {
-    $this->get('/settings')->assertStatus(200)->assertSee('AI Provider Settings');
+    $this->withoutVite()->get('/settings')->assertStatus(200)->assertSee('AI Provider Settings');
 });
 
 test('candidate can be created', function () {

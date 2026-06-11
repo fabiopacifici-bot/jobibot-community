@@ -221,14 +221,14 @@ test('provider health check does not throw on unreachable endpoint', function ()
 // ─── Livewire Component Edge Cases ──────────────────────────────────────────
 
 test('dashboard renders without authenticated user', function () {
-    $response = $this->get('/');
+    $response = $this->withoutVite()->get('/');
     $response->assertStatus(200);
     $response->assertSee('JobiBot');
 });
 
 test('settings page shows correct default provider', function () {
     config(['jobibot.provider' => 'ollama']);
-    $response = $this->get('/settings');
+    $response = $this->withoutVite()->get('/settings');
     $response->assertStatus(200);
     $response->assertSee('AI Provider Settings');
 });
@@ -236,7 +236,7 @@ test('settings page shows correct default provider', function () {
 test('pages load without csrf token issues', function () {
     $pages = ['/', '/cv', '/jobs', '/interview', '/settings'];
     foreach ($pages as $page) {
-        $response = $this->get($page);
+        $response = $this->withoutVite()->get($page);
         expect($response->status())->toBe(200);
     }
 });
