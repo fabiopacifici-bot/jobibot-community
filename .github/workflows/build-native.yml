@@ -231,7 +231,25 @@ jobs:
           # Fix launcher label
           MANIFEST="nativephp/android/app/src/main/AndroidManifest.xml"
           sed -i 's/android:label="NativePHP"/android:label="JobiBot"/g' "$MANIFEST"
+          # Set app icon
+          sed -i 's/android:icon="@mipmap\/ic_launcher"/android:icon="@mipmap\/ic_launcher"/g' "$MANIFEST"
           echo "Placeholders replaced"
+
+      - name: Generate Android app icon from JobiBot logo
+        run: |
+          LOGO="public/images/logo.png"
+          RES_BASE="nativephp/android/app/src/main/res"
+
+          # Generate icons for each density
+          for density in mdpi:48 hdpi:72 xhdpi:96 xxhdpi:144 xxxhdpi:192; do
+            size=${density#*:}
+            name=${density%:*}
+            dir="${RES_BASE}/mipmap-${name}"
+            mkdir -p "$dir"
+            convert "$LOGO" -resize ${size}x${size} -gravity center -extent ${size}x${size} "${dir}/ic_launcher.png"
+            convert "$LOGO" -resize ${size}x${size} -gravity center -extent ${size}x${size} "${dir}/ic_launcher_round.png"
+            echo "Generated mipmap-${name}: ${size}x${size}"
+          done
 
       - name: Bundle Laravel app into Android assets
         run: |
