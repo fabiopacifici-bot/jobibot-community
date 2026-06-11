@@ -49,7 +49,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jobibot-linux
-          path: "nativephp/electron/dist/*"
+          path: "nativephp/electron/dist/*.{AppImage,deb}"
 
   desktop-macos:
     name: Desktop — macOS
@@ -93,7 +93,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jobibot-macos
-          path: "nativephp/electron/dist/*"
+          path: "nativephp/electron/dist/*.dmg"
 
   desktop-windows:
     name: Desktop — Windows
@@ -137,7 +137,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: jobibot-windows
-          path: "nativephp/electron/dist/*"
+          path: "nativephp/electron/dist/*.exe"
 
   release:
     name: Create Release
@@ -190,7 +190,7 @@ jobs:
 
             ### Downloads
             Desktop builds for Linux, macOS, and Windows.
-          files: "dist/**/*"
+          files: "dist/**/*.{AppImage,dmg,exe,deb}"
           draft: false
           prerelease: false
         env:
