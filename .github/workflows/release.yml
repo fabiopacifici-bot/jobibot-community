@@ -1,12 +1,14 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_run:
+    workflows: ['Build Native Artifacts']
+    types:
+      - completed
 
 jobs:
   release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -35,6 +37,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: dist/
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Display downloaded artifacts
         run: ls -R dist/
@@ -43,6 +47,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           name: "JobiBot Community ${{ github.ref_name }}"
+          tag_name: ${{ github.ref_name }}
           body: |
             ## JobiBot Community Edition ${{ github.ref_name }}
 
