@@ -139,9 +139,136 @@ jobs:
           name: jobibot-windows
           path: "nativephp/electron/dist/*.exe"
 
+  mobile-android:
+    name: Mobile — Android
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: dom, curl, libxml, mbstring, zip, fileinfo
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Swap desktop for mobile (NativePHP conflict workaround)
+        run: |
+          composer remove nativephp/desktop --no-interaction --no-update
+          composer require nativephp/mobile --no-interaction --no-update
+          composer update --no-interaction --prefer-dist
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Build frontend assets
+        run: npm run build
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          echo "NATIVEPHP_APP_ID=ai.jobibot.community" >> .env
+          echo "NATIVEPHP_APP_VERSION=$(echo ${{ github.ref_name }} | sed 's/^v//')" >> .env
+          echo "NATIVEPHP_APP_VERSION_CODE=1" >> .env
+
+      - name: Install NativePHP Mobile
+        run: php artisan native:install --force --no-interaction
+
+      - name: Fix Android placeholders
+        run: |
+          GRADLE_FILE="nativephp/android/app/build.gradle.kts"
+          sed -i 's/REPLACE_APP_ID/ai.jobibot.community/g' "$GRADLE_FILE"
+          sed -i 's/REPLACEMECODE/1/g' "$GRADLE_FILE"
+          sed -i 's/REPLACEME/1.0.0/g' "$GRADLE_FILE"
+          sed -i 's/REPLACE_MINIFY_ENABLED/false/g' "$GRADLE_FILE"
+          sed -i 's/REPLACE_SHRINK_RESOURCES/false/g' "$GRADLE_FILE"
+          sed -i 's/REPLACE_DEBUG_SYMBOLS/none/g' "$GRADLE_FILE"
+          # Fix launcher label
+          MANIFEST="nativephp/android/app/src/main/AndroidManifest.xml"
+          sed -i 's/android:label="NativePHP"/android:label="JobiBot"/g' "$MANIFEST"
+          echo "Placeholders replaced"
+
+      - name: Bundle Laravel app into Android assets
+        run: |
+          ASSETS_DIR="nativephp/android/app/src/main/assets"
+          BUNDLE_ZIP="${ASSETS_DIR}/laravel_bundle.zip"
+          STAGING="nativephp/android/laravel_staging"
+          mkdir -p "${ASSETS_DIR}" "${STAGING}"
+
+          # Copy app source (excluding build artefacts and android project)
+          rsync -a --delete \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='nativephp' \
+            --exclude='*.zip' \
+            --exclude='*.jks' \
+            . "${STAGING}/"
+
+          # Install production Composer deps inside staging
+          composer install --no-dev --no-interaction --prefer-dist \
+            --optimize-autoloader --no-scripts \
+            --working-dir="${STAGING}"
+          composer dump-autoload --optimize --classmap-authoritative --no-scripts \
+            --working-dir="${STAGING}"
+
+          # Copy bootstrap artisan.php entry-point
+          cp vendor/nativephp/mobile/bootstrap/android/artisan.php "${STAGING}/artisan.php"
+
+          # Copy .env
+          cp .env "${STAGING}/.env"
+
+          # Ensure writable dirs
+          mkdir -p "${STAGING}/bootstrap/cache"
+          mkdir -p "${STAGING}/storage/framework/cache"
+          mkdir -p "${STAGING}/storage/framework/sessions"
+          mkdir -p "${STAGING}/storage/framework/views"
+
+          # Remove dev-only caches
+          rm -f "${STAGING}/bootstrap/cache/packages.php"
+          rm -f "${STAGING}/bootstrap/cache/services.php"
+
+          # Create bundle zip
+          BUNDLE_ZIP_ABS="${GITHUB_WORKSPACE}/${BUNDLE_ZIP}"
+          cd "${STAGING}" && zip -r "${BUNDLE_ZIP_ABS}" . && cd -
+
+          echo "Bundle size: $(du -sh ${BUNDLE_ZIP_ABS} | cut -f1)"
+          ls -lh "${BUNDLE_ZIP_ABS}"
+
+      - name: Build Android APK
+        run: |
+          cd nativephp/android && chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+
+      - name: Find APK
+        id: find_apk
+        run: |
+          APK_PATH=$(find nativephp/android/app/build/outputs/apk/debug/ -name "*.apk" | head -n 1)
+          echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
+          echo "Found APK: $APK_PATH"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jobibot-android
+          path: ${{ steps.find_apk.outputs.apk_path }}
+
   release:
     name: Create Release
-    needs: [desktop-linux, desktop-macos, desktop-windows]
+    needs: [desktop-linux, desktop-macos, desktop-windows, mobile-android]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -171,11 +298,10 @@ jobs:
         with:
           pattern: "jobibot-*"
           path: "dist/"
-          merge-multiple: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Display artifacts
-        run: ls -R dist/
+        run: find dist/ -type f | sort
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -189,8 +315,8 @@ jobs:
             ${{ steps.changelog.outputs.changelog }}
 
             ### Downloads
-            Desktop builds for Linux, macOS, and Windows.
-          files: "dist/**/*.{AppImage,dmg,exe,deb}"
+            Desktop builds for Linux, macOS, Windows + Android APK.
+          files: "dist/**/*.{AppImage,dmg,exe,deb,apk}"
           draft: false
           prerelease: false
         env:
