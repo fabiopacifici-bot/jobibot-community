@@ -166,10 +166,13 @@ jobs:
             echo EOF
           } >> "$GITHUB_OUTPUT"
 
-      - name: Download artifacts
+      - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
+          pattern: "jobibot-*"
           path: "dist/"
+          merge-multiple: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Display artifacts
         run: ls -R dist/
