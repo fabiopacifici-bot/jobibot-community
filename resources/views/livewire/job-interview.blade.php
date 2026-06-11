@@ -1,35 +1,35 @@
 <div>
     <div class="mb-4">
-        <h2 class="text-xl font-bold">🎯 Interview Simulation</h2>
-        <p class="text-sm text-gray-500">Practice job interviews with AI. Your responses are analyzed in real-time.</p>
+        <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">🎯 Interview Simulation</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Practice job interviews with AI. Your responses are analyzed in real-time.</p>
     </div>
 
     {{-- Start Screen --}}
     @if(!$simulationStarted)
-        <div class="bg-white rounded-xl shadow-sm border p-6 max-w-2xl mx-auto">
+        <div class="bg-white dark:bg-gray-950 rounded-xl border border-gray-200 dark:border-gray-800 p-6 max-w-2xl mx-auto shadow-sm">
             <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Your Name</label>
                 <input type="text" wire:model="fullname"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500"
                        placeholder="Enter your full name">
                 @error('fullname') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
             <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Job Description</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Job Description</label>
                 <textarea wire:model="job" rows="5"
-                          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                          class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500"
                           placeholder="Paste a job description here to simulate an interview for that role..."></textarea>
                 @error('job') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
             @if($cvMatchScore)
-                <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm">
+                <div class="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg text-sm text-blue-700 dark:text-blue-300">
                     📊 CV Match Score: <strong>{{ $cvMatchScore }}%</strong>
                 </div>
             @endif
 
             <button wire:click="startSimulation"
-                    class="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition">
+                    class="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition-colors">
                 🚀 Start Interview Simulation
             </button>
         </div>
@@ -44,18 +44,18 @@
                     <div class="text-4xl font-bold mb-2">{{ $simulationScore }}%</div>
                     <div class="text-sm opacity-90">{{ $considerations }}</div>
                 </div>
-                <button wire:click="newSimulation" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 mb-6">
+                <button wire:click="newSimulation" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 mb-6 transition-colors">
                     🔄 Start New Simulation
                 </button>
             @endif
 
             {{-- Conversation --}}
             <div x-data x-init="$watch('$wire.conversation.length', () => { setTimeout(() => { const el = $el.querySelector('#conversation-end'); el?.scrollIntoView({ behavior: 'smooth' }); }, 50) })"
-                 class="bg-white rounded-xl shadow-sm border">
-                <div class="p-4 border-b bg-gray-50 rounded-t-xl flex justify-between items-center">
-                    <span class="text-sm font-medium text-gray-600">Interview in progress...</span>
+                 class="bg-white dark:bg-gray-950 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
+                <div class="p-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 rounded-t-xl flex justify-between items-center">
+                    <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Interview in progress...</span>
                     @if(!$simulationScore)
-                        <button wire:click="endSimulation" class="text-xs text-red-600 hover:underline">
+                        <button wire:click="endSimulation" class="text-xs text-red-600 dark:text-red-400 hover:underline">
                             ⏹ End Simulation
                         </button>
                     @endif
@@ -66,7 +66,7 @@
                             <div class="max-w-[80%] rounded-xl px-4 py-2 text-sm
                                 {{ $msg['role'] === 'user'
                                     ? 'bg-indigo-600 text-white rounded-br-sm'
-                                    : 'bg-gray-100 text-gray-800 rounded-bl-sm' }}"
+                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-sm' }}"
                                  id="simulation-message-{{ $i }}">
                                 {!! nl2br(e($msg['content'])) !!}
                             </div>
@@ -76,11 +76,11 @@
 
                     @if($loading)
                         <div class="flex justify-start">
-                            <div class="bg-gray-100 rounded-xl px-4 py-3 text-sm text-gray-500">
+                            <div class="bg-gray-100 dark:bg-gray-800 rounded-xl px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
                                 <div class="flex gap-1">
-                                    <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay:0s"></span>
-                                    <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay:0.2s"></span>
-                                    <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay:0.4s"></span>
+                                    <span class="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style="animation-delay:0s"></span>
+                                    <span class="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style="animation-delay:0.2s"></span>
+                                    <span class="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style="animation-delay:0.4s"></span>
                                 </div>
                             </div>
                         </div>
@@ -89,15 +89,15 @@
 
                 {{-- Input Area --}}
                 @if(!$simulationScore && $simulationStarted)
-                    <div class="p-4 border-t">
+                    <div class="p-4 border-t border-gray-200 dark:border-gray-800">
                         <div class="flex gap-2">
                             <textarea wire:model="prompt" rows="2"
                                       wire:keydown.enter.prevent="submitAnswer"
-                                      class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 resize-none text-sm"
+                                      class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-indigo-500 resize-none text-sm"
                                       placeholder="Type your answer... (Enter to send)"></textarea>
                             <button wire:click="submitAnswer"
                                     wire:loading.attr="disabled"
-                                    class="bg-indigo-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 self-end">
+                                    class="bg-indigo-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 self-end transition-colors">
                                 Send
                             </button>
                         </div>

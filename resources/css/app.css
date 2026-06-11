@@ -13,8 +13,19 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overscroll-behavior: none;
-    -webkit-user-select: none;
-    user-select: none;
+}
+
+/* ── Titlebar drag region (Electron window dragging) ─────────────────────── */
+
+.titlebar-region {
+    -webkit-app-region: drag;
+    app-region: drag;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────────────────── */
+
+.dark .sidebar-icon {
+    filter: brightness(0.9);
 }
 
 /* ── Safe area insets (notched phones) ──────────────────────────────────── */
@@ -54,9 +65,29 @@ body {
     }
 }
 
-/* ── Native window drag region (desktop) ────────────────────────────────── */
+/* ── Scrollbar styling ──────────────────────────────────────────────────── */
 
-.titlebar-drag-region {
-    -webkit-app-region: drag;
-    app-region: drag;
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: theme('colors.gray.300');
+    border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: theme('colors.gray.600');
+}
+
+/* ── Transitions ────────────────────────────────────────────────────────── */
+
+* {
+    transition-property: background-color, border-color, color;
+    transition-duration: 150ms;
 }

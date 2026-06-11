@@ -27,6 +27,13 @@ class CvUpload extends Component
             'cv' => 'file|mimes:pdf,doc,docx,txt|max:'.(config('jobibot.cv_max_size_kb', 5120)),
         ]);
 
+        if (! Auth::check()) {
+            session()->flash('error', 'Please register or log in to upload your CV.');
+            $this->loading = false;
+
+            return;
+        }
+
         $this->loading = true;
 
         try {
@@ -104,10 +111,15 @@ class CvUpload extends Component
 
     public function render()
     {
-        $candidate = Candidate::where('user_id', Auth::id())->first();
+        $candidate = null;
+
+        if (Auth::check()) {
+            $candidate = Candidate::where('user_id', Auth::id())->first();
+        }
 
         return view('livewire.cv-upload', [
             'candidate' => $candidate,
+            'authenticated' => Auth::check(),
         ]);
     }
 }
