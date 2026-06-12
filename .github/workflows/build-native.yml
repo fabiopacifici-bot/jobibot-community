@@ -241,6 +241,9 @@ jobs:
           LOGO="public/images/logo.png"
           RES_BASE="nativephp/android/app/src/main/res"
 
+          # Remove default NativePHP icons (.webp) to avoid duplicate resource errors
+          find "$RES_BASE" -name "ic_launcher*.webp" -delete
+
           # Generate icons for each density
           for density in mdpi:48 hdpi:72 xhdpi:96 xxhdpi:144 xxxhdpi:192; do
             size=${density#*:}
