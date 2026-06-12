@@ -237,6 +237,7 @@ jobs:
 
       - name: Generate Android app icon from JobiBot logo
         run: |
+          sudo apt-get install -y imagemagick
           LOGO="public/images/logo.png"
           RES_BASE="nativephp/android/app/src/main/res"
 
